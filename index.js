@@ -4,7 +4,17 @@ io = require('socket.io')(http),
 port = process.env.PORT || 3000,
 publicDir = `${__dirname}/public`
 http.listen(port, () =>{
-    console.log('Iniciando en localhost:%d', port);
+    console.log('################################################')
+    console.log('#       Servidor iniciado en localhost:%d    #', port);
+    console.log('################################################')
+    console.log('\n')
+    console.log('####### ######## ##     ## ######## ######  ########')
+    console.log('#       #      # # #   # # #      # #     # #      #')
+    console.log('#       ######## #  # #  # ######## ######  ######## ')
+    console.log('#       #      # #   #   # #      # #   #   #      #')
+    console.log('####### #      # #       # #      # #     # #      #')
+    console.log('\n')
+    console.log('###################################################')
     
 })
 

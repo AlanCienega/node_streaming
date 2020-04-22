@@ -4,12 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cliente</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
 </head>
-<body>
-    <h1>cliente</h1>
-    <img id="streaming">
+<body  style="background: linear-gradient(#4B79A1,#283E51);">
+    <div class="d-flex justify-content-center" style="color:white"><h1>cliente</h1></div>
+    <div class="d-flex justify-content-center">
+        <img id="streaming" style="filter: brightness(1)">
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="form-group text-center">
+            <button onclick="ajustarBrillo(1)" class="btn btn-primary"> Brillo -</button>
+            <button onclick="ajustarBrillo(2)" class="btn btn-primary"> Brillo +</button>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="form-group text-center">
+            <button onclick="ajustarContraste(1)" class="btn btn-primary"> Contraste -</button>
+            <button onclick="ajustarContraste(2)" class="btn btn-primary"> Contraste +</button>
+        </div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        var brillo = 1, contraste =1
+        //Ajuste de  brillo
+        function ajustarBrillo (value) {
+            if (value == 1  && brillo > 0) {
+                brillo -= .1
+                document.getElementById("streaming").style.filter = 
+                "brightness("+brillo+") contrast("+contraste+" "
+            }else if (value == 2 && brillo <3) {
+                brillo += .1
+                document.getElementById("streaming").style.filter = 
+                "brightness("+brillo+") contrast("+contraste+" "
+            }
+        }
+        //Ajuste de  contraste
+        function ajustarContraste (value) {
+            if (value == 1  && contraste > 0) {
+                contraste -= .1
+                document.getElementById("streaming").style.filter = 
+                "contrast("+contraste+") brightness("+brillo+")"
+            }else if (value == 2 && contraste <3) {
+                contraste += .1
+                document.getElementById("streaming").style.filter = 
+                "contrast("+contraste+") brightness("+brillo+")"
+            }
+        }
         (function(d, io) {
             var io = io()
 

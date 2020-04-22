@@ -4,15 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servidor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
-<body>
-    <h1>Servidor</h1>
+<body style="background: linear-gradient(#4B79A1,#283E51);">
+   
+    <div class="d-flex justify-content-center" style="color:white"> <h1>Servidor</h1> </div>
     <video id="video"></video>
-    <canvas id="canvas" width="1280", height="720"></canvas>
+
+    <div class="d-flex justify-content-center mb-0">
+        <canvas id="canvas" width="640", height="480" id="canvas"></canvas>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="form-group text-center">
+            <button onclick="ajustarBrillo(1)" class="btn btn-primary"> Brillo -</button>
+            <button onclick="ajustarBrillo(2)" class="btn btn-primary"> Brillo +</button>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="form-group text-center">
+            <button onclick="ajustarContraste(1)" class="btn btn-primary"> Contraste -</button>
+            <button onclick="ajustarContraste(2)" class="btn btn-primary"> Contraste +</button>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center" style="color:white">cienegaserrano.com </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        var brillo = 1, contraste =1
+        //Ajuste de  brillo
+        function ajustarBrillo (value) {
+            if (value == 1  && brillo > 0) {
+                brillo -= .1
+                document.getElementById("canvas").style.filter = 
+                "brightness("+brillo+") contrast("+contraste+" "
+            }else if (value == 2 && brillo <3) {
+                brillo += .1
+                document.getElementById("canvas").style.filter = 
+                "brightness("+brillo+") contrast("+contraste+" "
+            }
+            console.log("contraste = "+ contraste);
+            console.log("brillo = "+ brillo);
+        }
+        //Ajuste de  contraste
+        function ajustarContraste (value) {
+            if (value == 1  && contraste > 0) {
+                contraste -= .1
+                document.getElementById("canvas").style.filter = 
+                "contrast("+contraste+") brightness("+brillo+")"
+            }else if (value == 2 && contraste <3) {
+                contraste += .1
+                document.getElementById("canvas").style.filter = 
+                "contrast("+contraste+") brightness("+brillo+")"
+            }
+        }
 		(function (d, w, n, io){
 			'use strict'
+            
+            var cameras = []
 
 			var io = io(),
 				startCamera = false,
@@ -26,11 +73,21 @@
 				n.mozGetUserMedia ||
 				n.msGetUserMedia
 			)
-
+            //Listar los id de las camaras
+            n.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+            devices.forEach(function(device) {
+                cameras.push(device.deviceId);
+            });
+            })
+            .catch(function(err) {
+            console.log(err.name + ": " + err.message);
+            });
+            
 			n.streaming({
-				video : true,
+				video : { deviceId: cameras[0] },
 				audio : false
-			}, function (stream){
+			}, function (stream){ 
 				startCamera = true
                 video.srcObject = stream
                 video.play()
@@ -44,12 +101,12 @@
                     w.mozRequestAminationFrame  ||
                     w.msRequestanimationFrame ||
                     function (cb){
-                        w.setTimeout(cb, 1000/10)
+                        w.setTimeout(cb, 1000/5)
                     }
             })()
 
             function streamVideo(context, canvas, video) {
-                var outputStream = canvas.toDataURL('image/jpeg', .2)
+                var outputStream = canvas.toDataURL('image/jpeg', .6)
                 context.drawImage(video, 0, 0)
                 
                 if(startCamera){
