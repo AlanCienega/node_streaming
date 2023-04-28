@@ -1,31 +1,32 @@
-var app = require("express")(),
-  http = require("http").createServer(app),
-  io = require("socket.io")(http),
-  port = process.env.PORT || 3000,
-  publicDir = `${__dirname}/public`;
+const express = require("express");
+const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const dotenv = require("dotenv");
+dotenv.config();
+
+const port = process.env.APP_PORT || 3000;
+console.log(port);
+
+const publicDir = `${__dirname}/public`;
+
+// listen on specified port
 http.listen(port, () => {
-  console.log("################################################");
-  console.log("#       Servidor iniciado en localhost:%d    #", port);
-  console.log("################################################");
-  console.log("\n");
-  console.log("####### ######## ##     ## ######## ######  ########");
-  console.log("#       #      # # #   # # #      # #     # #      #");
-  console.log("#       ######## #  # #  # ######## ######  ######## ");
-  console.log("#       #      # #   #   # #      # #   #   #      #");
-  console.log("####### #      # #       # #      # #     # #      #");
-  console.log("\n");
-  console.log("###################################################");
+  console.log(`Servidor iniciado en localhost: ${port}`);
 });
 
-app
-  .get("/", (req, res) => {
-    res.sendFile(`${publicDir}/client.html`);
-  })
-  .get("/streaming", (req, res) => {
-    res.sendFile(`${publicDir}/server.html`);
-  });
+// set up routes for different requests
+app.get("/", (req, res) => {
+  res.sendFile(`${publicDir}/client.html`);
+});
 
+app.get("/streaming", (req, res) => {
+  res.sendFile(`${publicDir}/server.html`);
+});
+
+// listen for incoming websocket connections
 io.on("connection", (socket) => {
+  // when a client sends a "streaming" event with an image, emit a "playStream" event with the image data to all connected clients
   socket.on("streaming", (image) => {
     io.emit("playStream", image);
   });
