@@ -1,127 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Servidor</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
-<body style="background: linear-gradient(#4B79A1,#283E51);">
-   
-    <div class="d-flex justify-content-center" style="color:white"> <h1>Servidor</h1> </div>
+    <link rel="stylesheet" href="/output.css" />
+  </head>
+  <body class="bg-neutral-500">
+    <div class="text-center text-neutral-200">
+      <h1>Servidor</h1>
+    </div>
     <video id="video"></video>
 
-    <div class="d-flex justify-content-center mb-0">
-        <canvas id="canvas" width="640", height="480" id="canvas"></canvas>
+    <center>
+      <canvas id="canvas" width="640" , height="480" id="canvas"></canvas>
+    </center>
+    <div class="d-flex justify-content-center">
+      <div class="form-group text-center">
+        <button onclick="ajustarBrillo(1)" class="bg-gray-600 px-2 rounded-md">
+          Brillo -
+        </button>
+        <button onclick="ajustarBrillo(2)" class="bg-gray-600 px-2 rounded-md">
+          Brillo +
+        </button>
+      </div>
     </div>
     <div class="d-flex justify-content-center">
-        <div class="form-group text-center">
-            <button onclick="ajustarBrillo(1)" class="btn btn-primary"> Brillo -</button>
-            <button onclick="ajustarBrillo(2)" class="btn btn-primary"> Brillo +</button>
-        </div>
+      <div class="form-group text-center">
+        <button
+          onclick="ajustarContraste(1)"
+          class="bg-gray-600 px-2 rounded-md"
+        >
+          Contraste -
+        </button>
+        <button
+          onclick="ajustarContraste(2)"
+          class="bg-gray-600 px-2 rounded-md"
+        >
+          Contraste +
+        </button>
+      </div>
     </div>
-    <div class="d-flex justify-content-center">
-        <div class="form-group text-center">
-            <button onclick="ajustarContraste(1)" class="btn btn-primary"> Contraste -</button>
-            <button onclick="ajustarContraste(2)" class="btn btn-primary"> Contraste +</button>
-        </div>
-    </div>
-    <div class="d-flex justify-content-center" style="color:white">cienegaserrano.com </div>
+    <div class="text-center">cienegaserrano.com</div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var brillo = 1, contraste =1
-        //Ajuste de  brillo
-        function ajustarBrillo (value) {
-            if (value == 1  && brillo > 0) {
-                brillo -= .1
-                document.getElementById("canvas").style.filter = 
-                "brightness("+brillo+") contrast("+contraste+" "
-            }else if (value == 2 && brillo <3) {
-                brillo += .1
-                document.getElementById("canvas").style.filter = 
-                "brightness("+brillo+") contrast("+contraste+" "
-            }
-            console.log("contraste = "+ contraste);
-            console.log("brillo = "+ brillo);
+      var brillo = 1,
+        contraste = 1;
+      //Ajuste de  brillo
+      function ajustarBrillo(value) {
+        if (value == 1 && brillo > 0) {
+          brillo -= 0.1;
+          document.getElementById("canvas").style.filter =
+            "brightness(" + brillo + ") contrast(" + contraste + " ";
+        } else if (value == 2 && brillo < 3) {
+          brillo += 0.1;
+          document.getElementById("canvas").style.filter =
+            "brightness(" + brillo + ") contrast(" + contraste + " ";
         }
-        //Ajuste de  contraste
-        function ajustarContraste (value) {
-            if (value == 1  && contraste > 0) {
-                contraste -= .1
-                document.getElementById("canvas").style.filter = 
-                "contrast("+contraste+") brightness("+brillo+")"
-            }else if (value == 2 && contraste <3) {
-                contraste += .1
-                document.getElementById("canvas").style.filter = 
-                "contrast("+contraste+") brightness("+brillo+")"
-            }
+        console.log("contraste = " + contraste);
+        console.log("brillo = " + brillo);
+      }
+      //Ajuste de  contraste
+      function ajustarContraste(value) {
+        if (value == 1 && contraste > 0) {
+          contraste -= 0.1;
+          document.getElementById("canvas").style.filter =
+            "contrast(" + contraste + ") brightness(" + brillo + ")";
+        } else if (value == 2 && contraste < 3) {
+          contraste += 0.1;
+          document.getElementById("canvas").style.filter =
+            "contrast(" + contraste + ") brightness(" + brillo + ")";
         }
-		(function (d, w, n, io){
-			'use strict'
-            
-            var cameras = []
+      }
+      (function (d, w, n, io) {
+        "use strict";
 
-			var io = io(),
-				startCamera = false,
-				video = d.querySelector('#video'),
-				canvas = d.querySelector('#canvas'),
-				context = canvas.getContext('2d')
+        var cameras = [];
 
-			n.streaming = (
-				n.getUserMedia ||
-				n.webkitGetUserMedia ||
-				n.mozGetUserMedia ||
-				n.msGetUserMedia
-			)
-            //Listar los id de las camaras
-            n.mediaDevices.enumerateDevices()
-            .then(function(devices) {
-            devices.forEach(function(device) {
-                cameras.push(device.deviceId);
+        var io = io(),
+          startCamera = false,
+          video = d.querySelector("#video"),
+          canvas = d.querySelector("#canvas"),
+          context = canvas.getContext("2d");
+
+        n.streaming =
+          n.getUserMedia ||
+          n.webkitGetUserMedia ||
+          n.mozGetUserMedia ||
+          n.msGetUserMedia;
+        //Listar los id de las camaras
+        n.mediaDevices
+          .enumerateDevices()
+          .then(function (devices) {
+            devices.forEach(function (device) {
+              cameras.push(device.deviceId);
             });
-            })
-            .catch(function(err) {
+          })
+          .catch(function (err) {
             console.log(err.name + ": " + err.message);
-            });
-            
-			n.streaming({
-				video : { deviceId: cameras[0] },
-				audio : false
-			}, function (stream){ 
-				startCamera = true
-                video.srcObject = stream
-                video.play()
-			}, function (err){
-				alert('error al acceder a la camara web: ' + err)
-            })
-            
-            w.playVideo = (function(vb){
-                return w.requestAnimationFrame ||
-                    w.webkitRequestAnimationFrame ||
-                    w.mozRequestAminationFrame  ||
-                    w.msRequestanimationFrame ||
-                    function (cb){
-                        w.setTimeout(cb, 1000/5)
-                    }
-            })()
+          });
 
-            function streamVideo(context, canvas, video) {
-                var outputStream = canvas.toDataURL('image/jpeg', .6)
-                context.drawImage(video, 0, 0)
-                
-                if(startCamera){
-                    io.emit('streaming', outputStream)
-                }
-                playVideo(function() {
-                    streamVideo(context, canvas, video)
-                })
+        n.streaming(
+          {
+            video: { deviceId: cameras[0] },
+            audio: false,
+          },
+          function (stream) {
+            startCamera = true;
+            video.srcObject = stream;
+            video.play();
+          },
+          function (err) {
+            alert("error al acceder a la camara web: " + err);
+          }
+        );
+
+        w.playVideo = (function (vb) {
+          return (
+            w.requestAnimationFrame ||
+            w.webkitRequestAnimationFrame ||
+            w.mozRequestAminationFrame ||
+            w.msRequestanimationFrame ||
+            function (cb) {
+              w.setTimeout(cb, 1000 / 5);
             }
-            w.addEventListener('load', function(){
-                video.autoplay = true
-                video.style.display = 'none'
-                streamVideo(context, canvas, video)
-            })
-		})(document, window, navigator, io)
-	</script>
-</body>
+          );
+        })();
+
+        function streamVideo(context, canvas, video) {
+          var outputStream = canvas.toDataURL("image/jpeg", 0.6);
+          context.drawImage(video, 0, 0);
+
+          if (startCamera) {
+            io.emit("streaming", outputStream);
+          }
+          playVideo(function () {
+            streamVideo(context, canvas, video);
+          });
+        }
+        w.addEventListener("load", function () {
+          video.autoplay = true;
+          video.style.display = "none";
+          streamVideo(context, canvas, video);
+        });
+      })(document, window, navigator, io);
+    </script>
+  </body>
 </html>

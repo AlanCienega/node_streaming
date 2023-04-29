@@ -6,9 +6,9 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const port = process.env.APP_PORT || 3000;
-console.log(port);
 
 const publicDir = `${__dirname}/public`;
+const distDir = `${__dirname}/dist`;
 
 // listen on specified port
 http.listen(port, () => {
@@ -23,6 +23,9 @@ app.get("/", (req, res) => {
 app.get("/streaming", (req, res) => {
   res.sendFile(`${publicDir}/server.html`);
 });
+
+// setup css file for views
+app.use(express.static(`${distDir}`));
 
 // listen for incoming websocket connections
 io.on("connection", (socket) => {
